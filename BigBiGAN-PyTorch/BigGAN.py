@@ -292,6 +292,8 @@ class Discriminator(nn.Module):
     super(Discriminator, self).__init__()
     # Width multiplier
     self.ch = D_ch
+    if E:
+        self.ch = 64
     # Use Wide D as in BigGAN and SA-GAN or skinny D as in SN-GAN?
     self.D_wide = D_wide
     # Resolution
@@ -354,17 +356,15 @@ class Discriminator(nn.Module):
     # Linear output layer. The output dimension is typically 1, but may be
     # larger if we're e.g. turning this into a VAE with an inference output
     self.linear_z = self.which_linear(dim_z,self.arch['out_channels'][-1])
-    self.linear_e = nn.Sequential(self.which_linear(self.arch['out_channels'][-1], dim_z)
-                                  )
+    self.linear_e = self.which_linear(self.arch['out_channels'][-1],dim_z)
 
     self.linear_x = self.which_linear(self.arch['out_channels'][-1], output_dim)
 
-    self.linear_xz = nn.Sequential(self.which_linear(self.arch['out_channels'][-1]*2, self.arch['out_channels'][-1]),
-                                self.activation,
-                                self.which_linear(self.arch['out_channels'][-1], self.arch['out_channels'][-1]),
-                                self.activation,
-                                self.which_linear(self.arch['out_channels'][-1], output_dim)
-                                )
+    self.linear_xz = self.which_linear(self.arch['out_channels'][-1]*2, output_dim)
+    # nn.Sequential(layers.BIBlock(self.arch['out_channels'][-1]*2, self.arch['out_channels'][-1],self.which_linear),
+    #                             layers.BIBlock(self.arch['out_channels'][-1], self.arch['out_channels'][-1],self.which_linear),
+    #                             layers.BIBlock(self.arch['out_channels'][-1], output_dim,self.which_linear),
+    #                             )
     # Embedding for projection discrimination
     # Embedding for projection discrimination
     self.linear_c = self.which_linear(self.arch['out_channels'][-1], n_classes)
@@ -465,7 +465,7 @@ class Discriminator(nn.Module):
             # if y is not None:
             #     proj = self.choose_prob(proj_c, y)
             # out += proj
-            return out, out, out
+            return out_x,out_xz, out, out
 
 # Parallelized G_D to minimize cross-gpu communication
 # Without this, Generator outputs would get all-gathered and then rebroadcast.
@@ -507,9 +507,9 @@ class G_D(nn.Module):
       z_input = torch.cat([z, true_z], 0) if x is not None else z
       D_class = torch.cat([gy, dy], 0) if dy is not None else gy
       # Get Discriminator output
-      D_out, mi, cls = self.D(D_input, z_input, D_class)
+      D_outx,D_outxz, mi, cls = self.D(D_input, z_input, D_class)
       if x is not None:
-        return D_out[:G_z.shape[0]], D_out[G_z.shape[0]:],mi, cls # D_fake, D_real
+        return D_outx[:G_z.shape[0]], D_outx[G_z.shape[0]:],D_outxz[:G_z.shape[0]], D_outxz[G_z.shape[0]:],mi, cls # D_fake, D_real
       else:
         if return_G_z:
           return D_out, G_z, mi, cls

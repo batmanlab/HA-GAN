@@ -40,19 +40,20 @@ def GAN_training_function(G, D,BI, GD, z_, y_, ema, state_dict, config):
         z_.sample_()
         y_.sample_()
         # print(y_)
-        D_fake, D_real, mi, c_cls = GD(z_[:config['batch_size']], y_[:config['batch_size']],
+        Dx_fake, Dx_real,Dxz_fake, Dxz_real, mi, c_cls = GD(z_[:config['batch_size']], y_[:config['batch_size']],
                             x[counter], y[counter], train_G=False,
                             split_D=config['split_D'])
          
         # Compute components of D's loss, average them, and divide by 
         # the number of gradient accumulations
-        D_loss_real, D_loss_fake = losses.discriminator_loss(D_fake, D_real)
+        Dx_loss_real, Dx_loss_fake = losses.discriminator_loss(Dx_fake, Dx_real)
+        Dxz_loss_real, Dxz_loss_fake = losses.discriminator_loss(Dxz_fake, Dxz_real)
         C_loss = 0
         if config['loss_type'] == 'Twin_AC':
             C_loss += F.cross_entropy(c_cls[D_fake.shape[0]:], y[counter]) + F.cross_entropy(mi[:D_fake.shape[0]], y_)
         if config['loss_type'] == 'AC':
             C_loss += F.cross_entropy(c_cls[D_fake.shape[0]:], y[counter])
-        D_loss = (D_loss_real + D_loss_fake + 1.0*C_loss*config['AC_weight']) / float(config['num_D_accumulations'])
+        D_loss = (Dx_loss_real + Dx_loss_fake + Dxz_loss_real + Dxz_loss_fake + 1.0*C_loss*config['AC_weight']) / float(config['num_D_accumulations'])
         D_loss.backward()
         counter += 1
         
@@ -80,7 +81,7 @@ def GAN_training_function(G, D,BI, GD, z_, y_, ema, state_dict, config):
             z_.sample_()
             y_.sample_()
             # D_fake, G_z, mi, c_cls = GD(z_, y_, train_G=True, split_D=config['split_D'], return_G_z=True)
-            D_fake, D_real, mi, c_cls = GD(z_[:config['batch_size']], y_[:config['batch_size']],
+            Dx_fake, Dx_real, Dxz_fake, Dxz_real, mi, c_cls = GD(z_[:config['batch_size']], y_[:config['batch_size']],
                                            x[counter], y[counter], train_G=True,
                                            split_D=config['split_D'])
             # print(G_z.min(),G_z.max(),x[counter-1].min(),x[counter-1].max())
@@ -93,8 +94,9 @@ def GAN_training_function(G, D,BI, GD, z_, y_, ema, state_dict, config):
 
             C_loss = C_loss / float(config['num_G_accumulations'])
             MI_loss = MI_loss / float(config['num_G_accumulations'])
-            G_loss = losses.generator_loss(D_fake,D_real) / float(config['num_G_accumulations'])
-            (G_loss + 1.0 * (C_loss - MI_loss) * config['AC_weight']).backward()
+            Gx_loss = losses.generator_loss(Dx_fake,Dx_real) / float(config['num_G_accumulations'])
+            Gxz_loss = losses.generator_loss(Dxz_fake, Dxz_real) / float(config['num_G_accumulations'])
+            (Gx_loss + Gxz_loss + 1.0 * (C_loss - MI_loss) * config['AC_weight']).backward()
             counter += 1
 
     # Optionally apply modified ortho reg in G
@@ -113,17 +115,23 @@ def GAN_training_function(G, D,BI, GD, z_, y_, ema, state_dict, config):
     # if float(str(state_dict['itr'])[-3])%2==0:
     #     for param_group in G.optim.param_groups:
     #         lr = param_group['lr']
-    #         param_group['lr'] = 4e-4
-    # else:
-    #     for param_group in G.optim.param_groups:
-    #         lr = param_group['lr']
     #         param_group['lr'] = 6e-4
+    # else:
+    #     for param_group in D.optim.param_groups:
+    #         lr = param_group['lr']
+    #         param_group['lr'] = 1e-3
     
     out = {
-        'G_loss': float(G_loss.item()),
-            'D_loss_real': float(D_loss_real.item()),
-            'D_loss_fake': float(D_loss_fake.item()),
+        'Gx_loss': float(Gx_loss.item()),
+        'Gxz_loss': float(Gxz_loss.item()),
+            'Dx_loss_real': float(Dx_loss_real.item()),
+            'Dx_loss_fake': float(Dx_loss_fake.item()),
+        'Dxz_loss_real': float(Dxz_loss_real.item()),
+        'Dxz_loss_fake': float(Dxz_loss_fake.item()),
     }
+    utils.toggle_grad(D, False)
+    utils.toggle_grad(G, False)
+    utils.toggle_grad(BI, False)
     # Return G's loss and the components of D's loss.
     return out
   return train
@@ -132,7 +140,7 @@ def GAN_training_function(G, D,BI, GD, z_, y_, ema, state_dict, config):
     requested), and prepares sample sheets: one consisting of samples given
     a fixed noise seed (to show how the model evolves throughout training),
     a set of full conditional sample sheets, and a set of interp sheets. '''
-def save_and_sample(G, D,BI, G_ema, z_, y_, fixed_z, fixed_y,
+def save_and_sample(G, D,BI, x, G_ema, z_, y_, fixed_z, fixed_y,
                     state_dict, config, experiment_name):
   utils.save_weights(G, D,BI, state_dict, config['weights_root'],
                      experiment_name, None, G_ema if config['ema'] else None)
@@ -157,16 +165,33 @@ def save_and_sample(G, D,BI, G_ema, z_, y_, fixed_z, fixed_y,
   # Save a random sample sheet with fixed z and y
   with torch.no_grad():
     if config['parallel']:
-      fixed_Gz =  nn.parallel.data_parallel(which_G, (fixed_z, which_G.shared(fixed_y)))
+      fixed_Gz =  nn.parallel.data_parallel(which_G, (fixed_z, which_G.shared(fixed_y))).float().cpu()
     else:
-      fixed_Gz = which_G(fixed_z, which_G.shared(fixed_y))
+      fixed_Gz = which_G(fixed_z, which_G.shared(fixed_y)).float().cpu()
+    true_z = nn.parallel.data_parallel(BI,(x[:fixed_z.size()[0]])).detach()
+    recontructed_Gz1 =  nn.parallel.data_parallel(which_G,(true_z[:int(fixed_z.size()[0]/2)], which_G.shared(fixed_y))).float().cpu()
+    recontructed_Gz2 = nn.parallel.data_parallel(
+        which_G,(true_z[int(fixed_z.size()[0] / 2):], which_G.shared(fixed_y))).float().cpu()
+    recontructed_Gz = torch.cat([recontructed_Gz1,recontructed_Gz2],dim=0)
   if not os.path.isdir('%s/%s' % (config['samples_root'], experiment_name)):
     os.mkdir('%s/%s' % (config['samples_root'], experiment_name))
-  image_filename = '%s/%s/fixed_samples%d.jpg' % (config['samples_root'], 
+
+  image_filename_t = '%s/%s/true_samples%d.jpg' % (config['samples_root'],
+                                                    experiment_name,
+                                                    state_dict['itr'])
+  image_filename_r = '%s/%s/reconstructed_samples%d.jpg' % (config['samples_root'],
                                                   experiment_name,
                                                   state_dict['itr'])
-  torchvision.utils.save_image(fixed_Gz.float().cpu(), image_filename,
+  image_filename = '%s/%s/fixed_samples%d.jpg' % (config['samples_root'],
+                                                          experiment_name,
+                                                          state_dict['itr'])
+
+  torchvision.utils.save_image(fixed_Gz, image_filename,
                              nrow=int(fixed_Gz.shape[0] **0.5), normalize=True)
+  torchvision.utils.save_image(x[:fixed_z.size()[0]].float().cpu(), image_filename_t,
+                               nrow=int(fixed_Gz.shape[0] ** 0.5), normalize=True)
+  torchvision.utils.save_image(recontructed_Gz, image_filename_r,
+                               nrow=int(fixed_Gz.shape[0] ** 0.5), normalize=True)
   # For now, every time we save, also save sample sheets
   utils.sample_sheet(which_G,
                      classes_per_sheet=utils.classes_per_sheet_dict[config['dataset']],

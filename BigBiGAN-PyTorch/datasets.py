@@ -433,7 +433,7 @@ class Lung(torch.utils.data.Dataset):
     else:
       id_, jjj = self.id_dict[index + 2417470]
 
-    img = np.loadtxt("{}{}/lung_{:03d}.txt".format(self.data_dir, id_, jjj)) / 255.
+    img = np.loadtxt("{}{}/lung_{:03d}.txt".format(self.data_dir, id_, jjj)) / 256.
 
     res = torch.zeros(3, 256, 256)
 

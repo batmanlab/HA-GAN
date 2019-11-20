@@ -537,5 +537,26 @@ class DBlock(nn.Module):
       h = self.downsample(h)     
         
     return h + self.shortcut(x)
+
+
+class BIBlock(nn.Module):
+  def __init__(self, in_channels, out_channels, which_layer=SNConv2d):
+    super(BIBlock, self).__init__()
+    self.in_channels, self.out_channels = in_channels, out_channels
+
+    self.layer1 = which_layer(in_channels, out_channels)
+    self.layer2 = which_layer(out_channels, out_channels)
+
+    if in_channels != out_channels:
+      self.layersc = which_layer(in_channels,out_channels)
+
+  def forward(self, x):
+
+    h = nn.ReLU()(self.layer1(x))
+    h = nn.ReLU()(self.layer2(h))
+    if self.in_channels != self.out_channels:
+      x = self.layersc(x)
+
+    return h + x
     
 # dogball
