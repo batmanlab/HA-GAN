@@ -415,35 +415,33 @@ class VAE_GAN(nn.Module):
                         recon_small, images_small) / (64 * 64 * 64)
                 
                 if not self.alpha_feature is None:
-                    with torch.no_grad():
-                        recon_feature1 = self.D( recon_crop1, feature_extraction = self.feature )
-                        recon_feature2 = self.D( recon_crop2, feature_extraction = self.feature )
-                        image_feature1 = self.D( crop_image1, feature_extraction = self.feature )
-                        image_feature2 = self.D( crop_image2, feature_extraction = self.feature )
-                        
-                        n_voxel = np.prod( list( recon_feature1.shape ) )  
-                        
-                        recon_feature1 = \
-                            self.alpha_feature * self.recon_loss(recon_feature1, image_feature1) / n_voxel
-                        recon_feature2 = \
-                            self.alpha_feature * self.recon_loss(recon_feature2, image_feature2) / n_voxel
+                    recon_feature1 = self.D( recon_crop1, feature_extraction = self.feature )
+                    recon_feature2 = self.D( recon_crop2, feature_extraction = self.feature )
+                    image_feature1 = self.D( crop_image1, feature_extraction = self.feature )
+                    image_feature2 = self.D( crop_image2, feature_extraction = self.feature )
+
+                    n_voxel = np.prod( list( recon_feature1.shape ) )  
+
+                    recon_feature1 = \
+                        self.alpha_feature * self.recon_loss(recon_feature1, image_feature1) / n_voxel
+                    recon_feature2 = \
+                        self.alpha_feature * self.recon_loss(recon_feature2, image_feature2) / n_voxel
                 else:
                     recon_feature1 = 0.
                     recon_feature2 = 0.
                     
                 if self.hp_weight > 0:        
-                    with torch.no_grad():
-                        recon_fea1 = self.hp_filter(recon_crop1)
-                        recon_fea2 = self.hp_filter(recon_crop2)
-                        image_fea1 = self.hp_filter(crop_image1)
-                        image_fea2 = self.hp_filter(crop_image2)
-                        
-                        n_voxel = np.prod( list( recon_fea1.shape ) )  
-                        
-                        recon_hp1 = \
-                            self.hp_weight * self.recon_loss(recon_fea1, image_fea1 ) / n_voxel
-                        recon_hp2 = \
-                            self.hp_weight * self.recon_loss(recon_fea2, image_fea2 ) / n_voxel
+                    recon_fea1 = self.hp_filter(recon_crop1)
+                    recon_fea2 = self.hp_filter(recon_crop2)
+                    image_fea1 = self.hp_filter(crop_image1)
+                    image_fea2 = self.hp_filter(crop_image2)
+
+                    n_voxel = np.prod( list( recon_fea1.shape ) )  
+
+                    recon_hp1 = \
+                        self.hp_weight * self.recon_loss(recon_fea1, image_fea1 ) / n_voxel
+                    recon_hp2 = \
+                        self.hp_weight * self.recon_loss(recon_fea2, image_fea2 ) / n_voxel
                 else:
                     recon_hp1 = 0.
                     recon_hp2 = 0.
