@@ -6,9 +6,13 @@ ROOT_DIR = "/home/lisun/work/copd/3dgan/data/"
 
 class COPD_dataset(Dataset):
 
-    def __init__(self, img_size=64, stage="train"):
+    def __init__(self, img_size=64, stage="train", threshold=-250):
         self.sid_list = []
-        self.root_dir = ROOT_DIR + "img_size_" + str(img_size) + "/"
+        self.root_dir = ROOT_DIR + "img_size_" + str(img_size)
+        if threshold != -250:
+            self.root_dir = self.root_dir + "_threshold_" + str(threshold) + "/"
+        else:
+            self.root_dir = self.root_dir + "/"
         for item in glob.glob(self.root_dir+"*.npy"):
             self.sid_list.append(item.split('/')[-1])
 
