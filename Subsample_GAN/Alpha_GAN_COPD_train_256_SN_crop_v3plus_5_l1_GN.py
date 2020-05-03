@@ -29,7 +29,7 @@ def main():
     img_size = 256
     TOTAL_ITER = 200000
     log_step = 20
-    continue_step = 62500
+    continue_step = 0
     threshold = 600
 
     #setting latent variable sizes
