@@ -92,5 +92,5 @@ def trim_state_dict_name(ckpt):
 
 def inf_train_gen(data_loader):
     while True:
-        for _,images in enumerate(data_loader):
-            yield images
+        for _,batch in enumerate(data_loader):
+            yield batch
