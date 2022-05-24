@@ -52,6 +52,21 @@ python evaluation/fid_score.py
   <img width="75%" height="%75" src="https://github.com/batmanlab/HA-GAN/blob/master/figures/sample_HA_GAN.png">
 </p>
 
+### Pretrained model
+<table><tbody>
+<!-- START TABLE -->
+<!-- TABLE HEADER -->
+<th valign="bottom">Dataset</th>
+<th valign="bottom">Iteration</th>
+<th valign="bottom">Checkpoint</th>
+<!-- TABLE BODY -->
+<tr><td align="left"><a href="https://www.ncbi.nlm.nih.gov/projects/gap/cgi-bin/study.cgi?study_id=phs000179.v6.p2">COPDGene</a></td>
+<td align="center">80000</td>
+<td align="center"><a href="https://drive.google.com/file/d/1orNvz7DLsCn5KWKjjVpEL4e5mO0akf6g/view?usp=sharing">download</a></td>
+</tr>
+  
+</tbody></table>
+
 ### Citation
 ```
 @ARTICLE{hagan2022,
