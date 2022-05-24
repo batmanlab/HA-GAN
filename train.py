@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
 # train HA-GAN
+# Hierarchical Amortized GAN for 3D High Resolution Medical Image Synthesis
+# https://ieeexplore.ieee.org/abstract/document/9770375
 
 import numpy as np
 import torch
