@@ -22,7 +22,7 @@ conda env create --name hagan -f environment.yml
 ```
 
 ### Data Preprocessing
-The volume data need to be cropped or resized to 128^3 or 256^3, and intensity value need to be scaled to [0,1]. We would like to advise you to trim black axial slices. More details can be found at
+The volume data need to be cropped or resized to 128<sup>3</sup> or 256<sup>3</sup>, and intensity value need to be scaled to [0,1]. In addition, we would like to advise you to trim blank axial slices. More details can be found at
 ```bash
 python preprocess.py
 ```
