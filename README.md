@@ -1,6 +1,6 @@
 # Hierarchical Amortized GAN (HA-GAN)
 
-Official PyTorch implementation for paper *Hierarchical Amortized GAN for 3D High Resolution Medical Image Synthesis*.
+Official PyTorch implementation for paper *Hierarchical Amortized GAN for 3D High Resolution Medical Image Synthesis*, accepted to *IEEE Journal of Biomedical and Health Informatics*
 
 <p align="center">
   <img width="75%" height="%75" src="https://github.com/batmanlab/HA-GAN/blob/master/figures/main_github.png">
