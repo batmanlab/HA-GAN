@@ -3,7 +3,7 @@
 Official PyTorch implementation for paper *Hierarchical Amortized GAN for 3D High Resolution Medical Image Synthesis*.
 
 <p align="center">
-  <img width="75%" height="%75" src="https://github.com/batmanlab/HA-GAN/blob/master/figures/main_github.pdf">
+  <img width="75%" height="%75" src="https://github.com/batmanlab/HA-GAN/blob/master/figures/main_github.png">
 </p>
 
 #### [[Paper & Supplementary Material]](https://ieeexplore.ieee.org/abstract/document/9770375)
@@ -53,6 +53,7 @@ python evaluation/fid_score.py
 </p>
 
 ### Citation
+```
 @ARTICLE{hagan2022,
   author={Sun, Li and Chen, Junxiang and Xu, Yanwu and Gong, Mingming and Yu, Ke and Batmanghelich, Kayhan},
   journal={IEEE Journal of Biomedical and Health Informatics}, 
@@ -62,3 +63,4 @@ python evaluation/fid_score.py
   number={},
   pages={1-1},
   doi={10.1109/JBHI.2022.3172976}}
+```
