@@ -1,3 +1,6 @@
+# resize and rescale images for preprocessing
+# expect input images have a suffix of .nii.gz
+
 import glob
 import SimpleITK as sitk
 import numpy as np
@@ -5,12 +8,13 @@ from skimage.transform import resize
 import os
 import multiprocessing as mp
 
-# 8 cored are used for multi-thread
+# 8 cores are used for multi-thread processing
 NUM_JOBS = 8
 # output size
 IMG_SIZE = 256
 INPUT_DATA_DIR = '/path_to_imgs/'
 OUTPUT_DATA_DIR = '/output_folder/'
+# the intensity range is clipped with the two thresholds
 LOW_THRESHOLD = -1024
 HIGH_THRESHOLD = 600
 
