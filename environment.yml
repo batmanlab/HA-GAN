@@ -1,5 +1,6 @@
 name: 3dgan
 channels:
+  - simpleitk
   - pytorch-lts
   - nvidia
   - anaconda
@@ -116,6 +117,7 @@ dependencies:
   - scikit-learn=1.0.2=py38h51133e4_1
   - scipy=1.7.3=py38hc147768_0
   - setuptools=61.2.0=py38h06a4308_0
+  - simpleitk=2.0.2=py38h3fd9d12_0
   - sip=4.19.13=py38h295c915_0
   - six=1.16.0=pyhd3eb1b0_1
   - sqlite=3.38.3=hc218d9a_0
