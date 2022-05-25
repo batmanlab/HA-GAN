@@ -16,6 +16,7 @@ Generative Adversarial Networks (GAN) have many potential medical imaging applic
 - nibabel
 - nilearn
 - tensorboardX
+- SimpleITK
 
 ```bash
 conda env create --name hagan -f environment.yml
@@ -31,11 +32,11 @@ python preprocess.py
 ### Training
 #### Unconditional HA-GAN
 ```bash
-python train.py --workers 8 --num-class 0 --exp-name 'HA_GAN_run1' --data-dir DATA_DIR
+python train.py --workers 8 --img-size 256 --num-class 0 --exp-name 'HA_GAN_run1' --data-dir DATA_DIR
 ```
 #### Conditional HA-GAN
 ```bash
-python train.py --workers 8 --num-class N --exp-name 'HA_GAN_cond_run1' --data-dir DATA_DIR
+python train.py --workers 8 --img-size 256 --num-class N --exp-name 'HA_GAN_cond_run1' --data-dir DATA_DIR
 ```
 
 Track your training with Tensorboard:
