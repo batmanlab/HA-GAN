@@ -19,6 +19,7 @@ Generative Adversarial Networks (GAN) have many potential medical imaging applic
 
 ```bash
 conda env create --name hagan -f environment.yml
+conda activate hagan
 ```
 
 ### Data Preprocessing
@@ -53,7 +54,7 @@ python evaluation/fid_score.py
   <img width="75%" height="%75" src="https://github.com/batmanlab/HA-GAN/blob/master/figures/sample_HA_GAN.png">
 </p>
 
-### Pretrained model
+### Pretrained weights
 <table><tbody>
 <!-- START TABLE -->
 <!-- TABLE HEADER -->
