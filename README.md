@@ -23,7 +23,7 @@ conda activate hagan
 ```
 
 ### Data Preprocessing
-The volume data need to be cropped or resized to 128<sup>3</sup> or 256<sup>3</sup>, and intensity value need to be scaled to [0,1]. In addition, we would like to advise you to trim blank axial slices. More details can be found at
+The volume data need to be cropped or resized to 128<sup>3</sup> or 256<sup>3</sup>, and intensity value need to be scaled to [-1,1]. In addition, we would like to advise you to trim blank axial slices. More details can be found at
 ```bash
 python preprocess.py
 ```
@@ -42,6 +42,8 @@ Track your training with Tensorboard:
 <p align="center">
   <img width="75%" height="%75" src="https://github.com/batmanlab/HA-GAN/blob/master/figures/tensorboard.png">
 </p>
+
+It will take around 22 hours to train unconditional HA-GAN for 80000 iterations with two NVIDIA Tesla V100 GPU.
 
 ### Testing
 ```bash
