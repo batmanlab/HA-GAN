@@ -62,12 +62,19 @@ python evaluation/fid_score.py
 <!-- START TABLE -->
 <!-- TABLE HEADER -->
 <th valign="bottom">Dataset</th>
+<th valign="bottom">Anatomy</th>
 <th valign="bottom">Iteration</th>
 <th valign="bottom">Checkpoint</th>
 <!-- TABLE BODY -->
 <tr><td align="left"><a href="https://www.ncbi.nlm.nih.gov/projects/gap/cgi-bin/study.cgi?study_id=phs000179.v6.p2">COPDGene</a></td>
+<td align="center">Lung</td>
 <td align="center">80000</td>
-<td align="center"><a href="https://drive.google.com/file/d/1orNvz7DLsCn5KWKjjVpEL4e5mO0akf6g/view?usp=sharing">download</a></td>
+<td align="center"><a href="https://drive.google.com/file/d/1orNvz7DLsCn5KWKjjVpEL4e5mO0akf6g/view?usp=sharing">Download</a></td>
+</tr>
+<tr><td align="left"><a href="https://dataverse.harvard.edu/dataverse/GSP">GSP</a></td>
+<td align="center">Brain</td>
+<td align="center">80000</td>
+<td align="center"><a href="https://drive.google.com/file/d/10AcfBPB_Tnjgy9bSj1qcZTW1s7qTIWRM/view?usp=sharing">Download</a></td>
 </tr>
   
 </tbody></table>
