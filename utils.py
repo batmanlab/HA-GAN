@@ -83,12 +83,13 @@ class KLN01Loss(torch.nn.Module):
 
         return KL
 
-def trim_state_dict_name(ckpt):
-    new_state_dict = OrderedDict()
-    for k, v in ckpt.items():
-        name = k[7:] # remove `module.`
-        new_state_dict[name] = v
-    return new_state_dict
+def trim_state_dict_name(state_dict):
+    for k in list(state_dict.keys()):
+        if k.startswith('module.'):
+            # remove prefix
+            state_dict[k[len("module."):]] = state_dict[k]
+            del state_dict[k]
+    return state_dict
 
 def inf_train_gen(data_loader):
     while True:
