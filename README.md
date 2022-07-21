@@ -44,11 +44,12 @@ Track your training with Tensorboard:
   <img width="75%" height="%75" src="https://github.com/batmanlab/HA-GAN/blob/master/figures/tensorboard.png">
 </p>
 
-It will take around 22 hours to train unconditional HA-GAN for 80000 iterations with two NVIDIA Tesla V100 GPU.
+It will take around 22 hours to train unconditional HA-GAN for 80000 iterations with two NVIDIA Tesla V100 GPU. It is suggested to have at least 3000 images for training to avoid mode collapse, or you may need to consider [data augmentation](https://docs.monai.io/en/stable/transforms.html#intensity-dict).
 
 ### Testing
 ```bash
 visualization.ipynb
+evaluation/visualize_feature_MDS.ipynb
 python evaluation/fid_score.py
 ```
 
