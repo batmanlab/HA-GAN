@@ -87,8 +87,8 @@ python evaluation/fid_score.py
   journal={IEEE Journal of Biomedical and Health Informatics}, 
   title={Hierarchical Amortized GAN for 3D High Resolution Medical Image Synthesis}, 
   year={2022},
-  volume={},
-  number={},
-  pages={1-1},
+  volume={26},
+  number={8},
+  pages={3966-3975},
   doi={10.1109/JBHI.2022.3172976}}
 ```
