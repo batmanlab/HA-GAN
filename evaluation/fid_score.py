@@ -239,6 +239,7 @@ def calculate_mmd(args, act):
     sample_1 = torch.from_numpy(act_real)
     sample_2 = torch.from_numpy(act)
 
+    # Need to install updated MMD package at https://github.com/lisun-ai/torch-two-sample for support of median alphas
     test_statistics, ret_matrix = mmd(sample_1, sample_2, alphas='median', ret_matrix=True)
     #p = mmd.pval(ret_matrix.float(), n_permutations=1000)
 
